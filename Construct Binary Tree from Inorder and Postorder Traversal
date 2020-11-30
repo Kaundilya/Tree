@@ -1,0 +1,44 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode* buildTreeUtil(vector<int>& inorder, vector<int>& postorder,int start,int end,int* pIndex, unordered_map<int, int>& mp)
+    {
+        if(start>end)
+            return NULL;
+        int curr=postorder[*pIndex];
+        TreeNode* node=new TreeNode(curr);
+        (*pIndex)--;
+         if (start == end) 
+        return node; 
+        int iIndex = mp[curr];
+        node->right=buildTreeUtil(inorder,postorder,iIndex+1,end,pIndex, mp);
+        node->left=buildTreeUtil(inorder,postorder,start,iIndex-1,pIndex, mp);
+        return node;
+    }
+ TreeNode* buildIndex(vector<int>& inorder, vector<int>& postorder,int n)
+ {
+     unordered_map<int,int>mp;
+     for(int i=0;i<n;i++)
+     {
+         mp[inorder[i]]=i;
+         
+     }
+     int index=n-1;
+     return buildTreeUtil(inorder,postorder,0,n-1,&index,mp);
+ }
+    TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+        int n=inorder.size();
+        TreeNode* root=buildIndex(inorder,postorder,n);
+        return root;
+    }
+};
